@@ -1,0 +1,6 @@
+tracker: jira                   #required
+url: https://jira.server.com    #required
+project: TM                     #required - the project key
+username: username              #required
+password: password              #required
+api_version: latest             #optional

@@ -16,14 +16,26 @@ $:.unshift(File.join(File.dirname(File.dirname(__FILE__)),'lib'))
 require 'rubygems'
 require 'slurper'
 require 'optparse'
+require 'jira'
+require 'pivotal'
 
-options = {}
+options = {:config_file => 'slurper_config.yml'}
+
 OptionParser.new do |opts|
   opts.on("-r", "--reverse", "Reverse story creation order") do |v|
     options[:reverse] = v
+  end
+
+  opts.on('-c', '--config_file [PATH]', "Tracker configuration file") do |v|
+    options[:config_file] = v
   end
 end.parse!
 
 story_file = ARGV.empty? ? "stories.slurper" : ARGV[0]
 
-Slurper.slurp(story_file, options[:reverse])
+handlers = [Jira.new, Pivotal.new]
+
+raise "Stories file not found: '#{story_file}'" if not File::exists? story_file
+raise "Config file not found: '#{options[:config_file]}'" if not File::exists? options[:config_file]
+
+Slurper.slurp(story_file, options[:config_file], handlers, options[:reverse])

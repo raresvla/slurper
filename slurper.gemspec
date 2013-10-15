@@ -27,12 +27,14 @@ Gem::Specification.new do |gem|
   gem.homepage = %q{http://github.com/hashrocket/slurper}
   gem.rdoc_options = ["--charset=UTF-8"]
   gem.require_paths = ["lib"]
-  gem.summary = %q{takes a formatted story file and puts it on Pivotal Tracker}
+  gem.summary = %q{takes a formatted story file and puts it on Pivotal / Jira Tracker}
   gem.test_files = [
     "spec/slurper_spec.rb",
     "spec/story_spec.rb"
   ]
 
+  gem.add_dependency("faraday", ["~> 0.8.8"])
+  gem.add_dependency("configliere", ["~> 0.4.8"])
   gem.add_dependency("activeresource", ["~> 3.0.9"])
   gem.add_development_dependency("rspec", ["~> 1.3.0"])
   gem.add_development_dependency("ruby-debug19", ["~> 0.11.6"])
