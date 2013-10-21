@@ -11,11 +11,11 @@ class Jira
     @api = jira_api || JiraApi.new
   end
 
-  def supports(config)
+  def supports?(config)
     config.fetch(:tracker, '').downcase == 'jira'
   end
 
-  def configure(config)
+  def configure!(config)
     settings = Configliere::Param.new
 
     settings.define :username, :required => true, :env_var => 'JIRA_USERNAME'
@@ -32,7 +32,7 @@ class Jira
   end
 
   def handle(yaml_story)
-    @api.configure(@config[:url], @config[:username], @config[:password], @config[:api_version])
+    @api.configure!(@config[:url], @config[:username], @config[:password], @config[:api_version])
 
     issue = @mapper.map(yaml_story, @config[:project])
 
@@ -43,7 +43,7 @@ end
 
 class JiraApi
 
-  def configure(url, username, password, api_version = 'latest')
+  def configure!(url, username, password, api_version = 'latest')
     @url = url
     @username = username
     @password = password

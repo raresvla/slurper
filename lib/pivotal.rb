@@ -1,7 +1,7 @@
 # Pivotal handler
 class Pivotal
 
-  def supports(config)
+  def supports?(config)
     (config[:tracker] == nil && config[:project_id] != nil) || config[:tracker].downcase == 'pivotal'
   end
 

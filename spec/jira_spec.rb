@@ -31,7 +31,7 @@ describe JiraApi do
     good_response = stub(success?: true)
 
     api = JiraApi.new
-    api.configure('http://server', 'user', 'pass', '2')
+    api.configure!('http://server', 'user', 'pass', '2')
 
     api.should_receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
 
@@ -44,7 +44,7 @@ describe JiraApi do
     issue = stub(to_json: 'json')
 
     api = JiraApi.new
-    api.configure('http://server', 'user', 'pass', '2')
+    api.configure!('http://server', 'user', 'pass', '2')
     api.should_receive(:post).and_return(bad_response)
 
     expect { api.create_issue(issue) }.to raise_error Exception
@@ -61,22 +61,22 @@ describe Jira do
 
   context "#supports" do
     it "should support the jira config if tracker is given" do
-      @jira.supports(:tracker => 'jira').should == true
+      @jira.supports?(:tracker => 'jira').should == true
     end
 
     it "should not support if tracker is missing" do
-      @jira.supports({}).should == false
+      @jira.supports?({}).should == false
     end
 
     it "should not support if tracker is anything else" do
-      @jira.supports(:tracker => 'pivotal').should == false
+      @jira.supports?(:tracker => 'pivotal').should == false
     end
   end
 
   context "#configure" do
     it "should fail if a required field is missing" do
       expect {
-        @jira.configure(:project => 'a project').should be_false
+        @jira.configure!(:project => 'a project').should be_false
       }.to raise_error 'Missing values for: password, url, username'
     end
 
@@ -87,18 +87,18 @@ describe Jira do
       end
 
       it "should pass if the required fields are present" do
-        config = @jira.configure(@raw_config)
+        config = @jira.configure! @raw_config
         config.username.should == 'value'
       end
 
       it "should return the default api version" do
-        config = @jira.configure(@raw_config)
+        config = @jira.configure! @raw_config
         config[:api_version].should == 'latest'
       end
 
       it "should overwrite the default api_version" do
         @raw_config[:api_version] = '2'
-        config = @jira.configure(@raw_config)
+        config = @jira.configure! @raw_config
         config[:api_version].should == '2'
       end
     end
@@ -114,6 +114,20 @@ describe Jira do
           :url => 'http://host'
       }
       @story = YamlStory.new(:description => 'description', :name => 'A story', :story_type => 'New Feature', :labels => 'a,b')
+    end
+
+    it "should create a json issue using the api" do
+      issue = stub(to_json: 'json')
+      mapper = stub(map: issue)
+
+      api = mock()
+      api.should_receive(:configure!).with('http://host', 'user', 'pass', 'latest')
+      api.should_receive(:create_issue).with issue
+
+      handler = Jira.new(mapper, api)
+      handler.configure! @config
+      handler.handle @story
+
     end
 
 

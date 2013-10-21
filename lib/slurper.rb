@@ -37,14 +37,14 @@ class Slurper
 
     error = "No handler found for the given configuration: #{config}"
 
-    handlers = @handlers.find_all { |handler| handler.supports(config) }
+    handlers = @handlers.find_all { |handler| handler.supports? config }
 
     raise error if handlers.length == 0
 
     handlers.each { |handler|
       puts "Preparing to slurp #{stories.size} stories into #{handler.class.name}..."
 
-      handler.configure(config)
+      handler.configure! config
 
       @stories.each_with_index { |story, index|
         puts "#{index+1}. #{story.name}"

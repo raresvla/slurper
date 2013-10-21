@@ -16,9 +16,9 @@ describe Slurper do
     end
 
     it "should detect the handler by checking the config" do
-      handler = double('handler')
-      handler.should_receive(:supports).with(@config).and_return(true)
-      handler.should_receive(:configure).and_return(true)
+      handler = mock('handler')
+      handler.should_receive(:supports?).with(@config).and_return(true)
+      handler.should_receive(:configure!).and_return(true)
       handler.should_receive(:handle)
 
       @slurper.handlers << handler
@@ -28,8 +28,8 @@ describe Slurper do
 
     it "should call configure on the handler" do
       handler = double
-      handler.should_receive(:supports).with(@config).and_return(true)
-      handler.should_receive(:configure).with(@config)
+      handler.should_receive(:supports?).with(@config).and_return(true)
+      handler.should_receive(:configure!).with(@config)
 
       @slurper.handlers << handler
 
@@ -38,11 +38,11 @@ describe Slurper do
 
     it "should delegate to the proper handler" do
       jira = double
-      jira.should_receive(:supports).and_return(false)
+      jira.should_receive(:supports?).and_return(false)
 
       pivotal = double
-      pivotal.should_receive(:supports).and_return(true)
-      pivotal.should_receive(:configure).and_return(true)
+      pivotal.should_receive(:supports?).and_return(true)
+      pivotal.should_receive(:configure!).and_return(true)
       pivotal.should_receive(:handle).with(@stories[0])
 
       @slurper.handlers += [jira, pivotal]
@@ -51,8 +51,8 @@ describe Slurper do
 
     it "should fail gracefully on handler exceptions" do
       handler = double
-      handler.stub(:supports).and_return(true)
-      handler.should_receive(:configure).and_return(true)
+      handler.stub(:supports?).and_return(true)
+      handler.should_receive(:configure!).and_return(true)
       handler.stub(:handle).and_raise('An error')
 
       @slurper.handlers << handler
@@ -66,8 +66,8 @@ describe Slurper do
       config_file = File.join(File.dirname(__FILE__), "fixtures", "slurper_config_pivotal.yml")
 
       handler = double
-      handler.stub(:supports).and_return true
-      handler.stub(:configure).and_return true
+      handler.stub(:supports?).and_return true
+      handler.stub(:configure!).and_return true
       handler.should_receive(:handle).once()
 
       Slurper.slurp(story_file, config_file, [handler], false)
