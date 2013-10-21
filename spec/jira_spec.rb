@@ -28,12 +28,26 @@ end
 
 describe JiraApi do
   it "should post with correctly configured the url" do
-    api = JiraApi.new()
+    good_response = stub(success?: true)
+
+    api = JiraApi.new
     api.configure('http://server', 'user', 'pass', '2')
 
-    api.should_receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash))
+    api.should_receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
 
     api.create_issue(stub(to_json: 'json'))
+
+  end
+
+  it "should raise error if the issue was not saved" do
+    bad_response = stub(success?: false, status: 401)
+    issue = stub(to_json: 'json')
+
+    api = JiraApi.new
+    api.configure('http://server', 'user', 'pass', '2')
+    api.should_receive(:post).and_return(bad_response)
+
+    expect { api.create_issue(issue) }.to raise_error Exception
 
   end
 

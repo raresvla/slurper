@@ -51,7 +51,11 @@ class JiraApi
   end
 
   def create_issue(jira_story)
-    post(url, jira_story.to_json, headers)
+    response = post(url, jira_story.to_json, headers)
+
+    if not response.success? then
+      raise Exception.new response.status
+    end
   end
 
   protected
