@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'spec'
 require 'slurper'
 require 'story'
 require 'jira'
@@ -28,20 +27,20 @@ end
 
 describe JiraApi do
   it "should post with correctly configured the url" do
-    good_response = stub(success?: true)
+    good_response = double(success?: true)
 
     api = JiraApi.new
     api.configure!('http://server', 'user', 'pass', '2')
 
     api.should_receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
 
-    api.create_issue(stub(to_json: 'json'))
+    api.create_issue(double(to_json: 'json'))
 
   end
 
   it "should raise error if the issue was not saved" do
-    bad_response = stub(success?: false, status: 401)
-    issue = stub(to_json: 'json')
+    bad_response = double(success?: false, status: 401)
+    issue = double(to_json: 'json')
 
     api = JiraApi.new
     api.configure!('http://server', 'user', 'pass', '2')
@@ -117,10 +116,10 @@ describe Jira do
     end
 
     it "should create a json issue using the api" do
-      issue = stub(to_json: 'json')
-      mapper = stub(map: issue)
+      issue = double(to_json: 'json')
+      mapper = double(map: issue)
 
-      api = mock()
+      api = double()
       api.should_receive(:configure!).with('http://host', 'user', 'pass', 'latest')
       api.should_receive(:create_issue).with issue
 

@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'spec'
 require 'slurper'
 require 'pivotal'
 
@@ -9,13 +8,13 @@ describe Pivotal do
     @tracker = Pivotal.new
   end
 
-  describe "#supports" do
+  describe "#supports?" do
     it "should support pivotal if project_id exists" do
-      @tracker.supports({:project_id => 12345}).should == true
+      @tracker.supports?({:project_id => 12345}).should == true
     end
 
     it "should support pivotal if specified" do
-      @tracker.supports({:tracker => 'pivotal'}).should == true
+      @tracker.supports?({:tracker => 'pivotal'}).should == true
     end
   end
 

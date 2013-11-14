@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'spec'
 require 'slurper'
 
 describe Slurper do
@@ -16,7 +15,7 @@ describe Slurper do
     end
 
     it "should detect the handler by checking the config" do
-      handler = mock('handler')
+      handler = double('handler')
       handler.should_receive(:supports?).with(@config).and_return(true)
       handler.should_receive(:configure!).and_return(true)
       handler.should_receive(:handle)
@@ -56,7 +55,7 @@ describe Slurper do
       handler.stub(:handle).and_raise('An error')
 
       @slurper.handlers << handler
-      expect { @slurper.create_stories }.should_not raise_error
+      expect { @slurper.create_stories }.not_to raise_error
     end
   end
 
