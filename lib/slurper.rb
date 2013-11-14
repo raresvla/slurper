@@ -71,7 +71,8 @@ class Slurper
     IO.read(story_file).
       gsub(/^/, '    ').
       gsub(/    ==.*/, "- \n").
-      gsub(/    description:$/, '    description: |')
+      gsub(/    description:$/, '    description: |').
+      gsub(/\t/, '  ')
   end
 
 end

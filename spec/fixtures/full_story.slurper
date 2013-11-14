@@ -4,12 +4,12 @@ story_type:
 name:
   Profit
 description:
-  In order to do something
-  As a role
-  I want to click a thingy
+	In order to do something
+	As a role
+	I want to click a thingy
 
-  Acceptance:
-  - do the thing
-  - don't forget the other thing
+	Acceptance:
+	- do the thing
+	- don't forget the other thing
 labels:
   money,power,fame
