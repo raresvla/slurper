@@ -54,7 +54,7 @@ class JiraApi
     response = post(url, jira_story.to_json, headers)
 
     if not response.success? then
-      raise Exception.new response.status
+      raise Exception.new "#{response.status} #{response.body}"
     end
   end
 
