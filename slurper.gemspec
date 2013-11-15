@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency("faraday", ["~> 0.8.8"])
   gem.add_dependency("configliere", ["~> 0.4.8"])
   gem.add_dependency("activeresource", ["~> 3.0.9"])
-  gem.add_development_dependency("rspec", ["~> 2.14.7"])
+  gem.add_development_dependency("rspec", ["~> 2.14.0"])
   gem.add_development_dependency("ruby-debug19", ["~> 0.11.6"])
   gem.add_development_dependency("configuration", ["~> 1.2.0"])
 
