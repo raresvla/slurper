@@ -1,10 +1,10 @@
 require 'active_support/core_ext'
 
 # Simple value object for a story
-# It's only concern is to store and format yaml data from storie
+# It's only concern is to store and format yaml data from stories
 class YamlStory
 
-  attr_reader :name, :labels, :story_type, :requested_by
+  attr_reader :name, :story_type, :requested_by
 
   def initialize(attributes = {}, defaults = {})
     defaults = defaults.with_indifferent_access
@@ -22,6 +22,11 @@ class YamlStory
     @story_type = attributes[:story_type]
     @labels = attributes[:labels]
     @requested_by = attributes[:requested_by]
+  end
+
+  def labels
+    return [] if not @labels
+    @labels.split(',').map { |label| label.strip }
   end
 
   def description
