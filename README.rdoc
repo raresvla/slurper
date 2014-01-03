@@ -18,9 +18,8 @@ See the bundled `slurper_config.jira.yml` and `slurper_config.pivotal.yml` for e
 Pivotal Configuration
 
   project_id: 1234
-  token: 123abc123abc123abc
   requested_by: Jane Stakeholder
-  ssl: true
+  token: 123abc123abc123abc         #optional - PIVOTAL_TOKEN env  variable
 
 The project_id tells tracker which project to add your stories to. It can be found on the project settings or the url for the project.
 
@@ -36,8 +35,8 @@ Jira Configuration
     tracker: jira                   #required
     url: https://jira.server.com    #required
     project: TM                     #required - the project key
-    username: username              #required
-    password: password              #required
+    username: username              #optional - JIRA_USERNAME env variable
+    password: password              #optional - JIRA_PASSWORD env variable
     api_version: latest             #optional
 
 
@@ -59,54 +58,54 @@ Or even
 
 === Example stories.slurper
 
-  ==
+      ==
 
-  story_type:
-    chore
-  name:
-    Set Up Staging Environment
-  description:
-    Set up and configure staging environment for approval of stories
+      story_type:
+        chore
+      name:
+        Set Up Staging Environment
+      description:
+        Set up and configure staging environment for approval of stories
 
-  labels:
-    staging
-  ==
+      labels:
+        staging
+      ==
 
-  story_type:
-    feature
-  name:
-    Campaign Manager Does Something
-  description:
-    In order to get some value
-    As a campaign manager
-    I want to do something
+      story_type:
+        feature
+      name:
+        Campaign Manager Does Something
+      description:
+        In order to get some value
+        As a campaign manager
+        I want to do something
 
-    - can do something
+        - can do something
 
-  labels:
-    campaign managers
-  ==
+      labels:
+        campaign managers
+      ==
 
-  story_type:
-    release
-  name:
-    Big Release
-  description:
-    This release marks a lot of awesome functionality
+      story_type:
+        release
+      name:
+        Big Release
+      description:
+        This release marks a lot of awesome functionality
 
-  labels:
-    campaign managers
-  ==
-  
-  story_type:
-    bug
-  name:
-    I did something and nothing happened
-  description:
-    When I do something, another thing is supposed to happen but I see an error screen instead.
+      labels:
+        campaign managers
+      ==
 
-  labels:
-    campaign managers
+      story_type:
+        bug
+      name:
+        I did something and nothing happened
+      description:
+        When I do something, another thing is supposed to happen but I see an error screen instead.
+
+      labels:
+        campaign managers
 
 Note: For jira, story_type should be one of the configured issue types. Eg: `New Feature`, `Bug`, `User Story`
 
