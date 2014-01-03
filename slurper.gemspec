@@ -4,7 +4,7 @@ require 'bundler'
 
 Gem::Specification.new do |gem|
   gem.name = %q{slurper}
-  gem.version = "1.1.8"
+  gem.version = "1.2"
 
   gem.required_rubygems_version = ">= 1.3.6"
   gem.authors = ["Wes Gibbs", "Adam Lowe", "Stephen Caudill", "Tim Pope"]
@@ -29,15 +29,13 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.summary = %q{takes a formatted story file and puts it on Pivotal / Jira Tracker}
   gem.test_files = [
+    "spec/jira_spec.rb",
+    "spec/pivotal_spec.rb",
     "spec/slurper_spec.rb",
-    "spec/story_spec.rb"
+    "spec/story_spec.rb",
   ]
 
   gem.add_dependency("faraday", ["~> 0.8.8"])
   gem.add_dependency("configliere", ["~> 0.4.8"])
-  gem.add_dependency("activeresource", ["~> 3.0.9"])
   gem.add_development_dependency("rspec", ["~> 2.14.0"])
-  gem.add_development_dependency("ruby-debug19", ["~> 0.11.6"])
-  gem.add_development_dependency("configuration", ["~> 1.2.0"])
-
 end

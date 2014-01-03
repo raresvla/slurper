@@ -22,11 +22,11 @@ require 'pivotal'
 options = {:config_file => 'slurper_config.yml'}
 
 OptionParser.new do |opts|
-  opts.on("-r", "--reverse", "Reverse story creation order") do |v|
+  opts.on('-r', '--reverse', 'Reverse story creation order') do |v|
     options[:reverse] = v
   end
 
-  opts.on('-c', '--config_file [PATH]', "Tracker configuration file") do |v|
+  opts.on('-c', '--config_file [PATH]', 'Tracker configuration file') do |v|
     options[:config_file] = v
   end
 end.parse!

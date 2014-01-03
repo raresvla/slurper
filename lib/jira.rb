@@ -1,7 +1,6 @@
 require 'faraday'
 require 'configliere'
 require 'base64'
-require 'active_support/core_ext'
 
 # Jira handler
 class Jira
@@ -99,7 +98,7 @@ class JiraStoryMapper
     hash[:issuetype] = {:name => story.story_type}
 
     if story.labels then
-      hash[:labels] = story.labels.split(',').map { |label| label.strip }
+      hash[:labels] = story.labels.map {|label| label.gsub(' ', '_')}
     end
 
     return { :fields => hash }

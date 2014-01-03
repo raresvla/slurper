@@ -1,10 +1,15 @@
 require 'yaml'
 require 'story'
-YAML::ENGINE.yamler='syck' if RUBY_VERSION > '1.9'
 
 class Slurper
-
   attr_accessor :story_file, :stories, :handlers
+
+  def self.dump(config_file, filter, handlers, reverse)
+    config = self.load_config(config_file)
+    slurper = new(config)
+    slurper.handlers = handlers
+    slurper.dump_stories(filter)
+  end
 
   def self.slurp(story_file, config_file, handlers, reverse)
     config = self.load_config(config_file)
@@ -12,67 +17,88 @@ class Slurper
     stories = self.load_stories(story_file, config)
     stories.reverse! unless reverse
 
-    slurper = new(stories, config)
+    slurper = new(config, stories)
     slurper.handlers = handlers
     slurper.create_stories
   end
 
-  def initialize(stories, config)
-    @stories = stories
+  def initialize(config, stories=[])
     @config = config
+    @stories = stories
     @handlers = []
   end
 
   def self.load_stories(story_file, defaults = {})
-    stories = YAML.load yamlize_story_file(story_file)
+    stories = []
+    yamlize_story_file(story_file).each do |story|
+      begin
+         story_hash = YAML.load(story)
+         stories << story_hash if story_hash.is_a?(Hash)
+      rescue
+        puts 'Error encountered when trying to parse the following story'
+        puts '-' * 10
+        puts story
+        puts '-' * 10
+        return []
+      end
+    end
     stories.map { |story_hash| YamlStory.new(story_hash, defaults) }
   end
 
   def self.load_config(config_file)
-    YAML.load_file(config_file).with_indifferent_access
+    YAML.load_file(config_file)
+  end
+
+  def dump_stories(filter)
+    handler.dump(filter) do |story|
+      puts story.to_yaml
+    end
   end
 
   def create_stories
-    config = @config
+    puts "Preparing to slurp #{stories.size} stories into #{handler.class.name}..."
 
-    error = "No handler found for the given configuration: #{config}"
+    @stories.each_with_index do |story, index|
+      puts "#{index+1}. #{story.name}"
 
-    handlers = @handlers.find_all { |handler| handler.supports? config }
-
-    raise error if handlers.length == 0
-
-    handlers.each { |handler|
-      puts "Preparing to slurp #{stories.size} stories into #{handler.class.name}..."
-
-      handler.configure! config
-
-      @stories.each_with_index { |story, index|
-        puts "#{index+1}. #{story.name}"
-
-        begin
-          handler.handle(story) do |status, message|
-            if status then
-              puts "Success: #{message}"
-            else
-              puts "Failed: #{message}"
-            end
+      begin
+        handler.handle(story) do |status, message|
+          if status then
+            puts "Success: #{message}"
+          else
+            puts "Failed: #{message}"
           end
-
-        rescue Exception => ex
-          puts "Failed: #{ex.message}"
         end
-      }
-    }
+
+      rescue Exception => ex
+        puts "Failed: #{ex.message}"
+      end
+    end
   end
 
   protected
 
+  def handler
+    return @handler if @handler
+
+    config = @config
+
+    error = "No handler found for the given configuration: #{config}"
+
+    handler = @handlers.detect { |handler| handler.supports? config }
+
+    raise error if not handler
+
+    handler.configure! config
+
+    @handler = handler
+  end
+
   def self.yamlize_story_file(story_file)
     IO.read(story_file).
-      gsub(/^/, '    ').
-      gsub(/    ==.*/, "- \n").
-      gsub(/    description:$/, '    description: |').
-      gsub(/\t/, '  ')
+      gsub(/description:$/, 'description: |').
+      gsub(/\t/, '  ').
+      split(/==.*/)
   end
 
 end
