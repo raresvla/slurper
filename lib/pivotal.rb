@@ -26,6 +26,18 @@ class Pivotal
     @api.create_story(yaml_story)
   end
 
+  def dump(filter)
+    @api.configure!(@config.project_id, @config.token)
+    @api.stories(filter).each do |story|
+      yield YamlStory.new(
+          name: story['name'],
+          description: story['description'],
+          story_type: story['story_type'],
+          labels: story['labels'].map{|l| l['name']}.join(', ')
+      )
+    end
+  end
+
 end
 
 class PivotalApi
@@ -51,10 +63,29 @@ class PivotalApi
     end
   end
 
+  def stories(filter)
+    response = get(url('stories'), filter, headers)
+    if not response.success? then
+      raise Exception.new "#{response.status} #{response.body}"
+    end
+
+    return JSON.parse(response.body.encode('ASCII', :invalid => :replace, :undef =>
+        :replace, :replace => '?'))
+  end
+
   protected
 
   def headers
     return {'Content-Type' => 'application/json', 'X-TrackerToken' => @token}
+  end
+
+  def get(issues_url, filter, headers)
+    conn = Faraday.new(ssl={:verify => false}) do |faraday|
+      faraday.headers = headers
+      faraday.adapter Faraday.default_adapter
+    end
+
+    return conn.get issues_url, {filter: filter, limit: 1000}
   end
 
   def post(issues_url, json_data, headers)

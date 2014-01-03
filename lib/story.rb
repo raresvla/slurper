@@ -30,4 +30,19 @@ class YamlStory
     @description.gsub('  ', '').gsub(" \n", "\n")
   end
 
+  def yaml_description
+    return '' if @description == nil || @description == ''
+    return @description.gsub(/^/, '  ')
+  end
+
+  def to_yaml
+    return "==
+story_type: #{story_type}
+name: \"#{name.gsub('"', "'")}\"
+description:
+#{yaml_description}
+labels: #{labels.join(', ')}
+"
+  end
+
 end
