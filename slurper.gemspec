@@ -3,11 +3,11 @@
 require 'bundler'
 
 Gem::Specification.new do |gem|
-  gem.name = %q{slurper}
-  gem.version = "1.2"
+  gem.name = %q{jira-slurper}
+  gem.version = "1.3"
 
   gem.required_rubygems_version = ">= 1.3.6"
-  gem.authors = ["Wes Gibbs", "Adam Lowe", "Stephen Caudill", "Tim Pope"]
+  gem.authors = ["Wes Gibbs", "Adam Lowe", "Stephen Caudill", "Tim Pope", "Catalin Costache"]
   gem.date = Date.today.to_s
   gem.default_executable = %q{slurp}
   gem.description = %q{
