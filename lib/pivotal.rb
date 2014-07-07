@@ -57,26 +57,22 @@ class PivotalApi
     }
 
     response = post(url('stories'), story.to_json, headers)
-
-    if not response.success? then
-      raise Exception.new "#{response.status} #{response.body}"
-    end
+    return response.success?, response.body
   end
 
   def stories(filter)
     response = get(url('stories'), filter, headers)
-    if not response.success? then
+    unless response.success?
       raise Exception.new "#{response.status} #{response.body}"
     end
 
-    return JSON.parse(response.body.encode('ASCII', :invalid => :replace, :undef =>
-        :replace, :replace => '?'))
+    JSON.parse(response.body.encode('ASCII', :invalid => :replace, :undef => :replace, :replace => '?'))
   end
 
   protected
 
   def headers
-    return {'Content-Type' => 'application/json', 'X-TrackerToken' => @token}
+    {'Content-Type' => 'application/json', 'X-TrackerToken' => @token}
   end
 
   def get(issues_url, filter, headers)
@@ -85,7 +81,7 @@ class PivotalApi
       faraday.adapter Faraday.default_adapter
     end
 
-    return conn.get issues_url, {filter: filter, limit: 1000}
+    conn.get issues_url, {filter: filter, limit: 1000}
   end
 
   def post(issues_url, json_data, headers)
@@ -94,7 +90,7 @@ class PivotalApi
       faraday.adapter Faraday.default_adapter
     end
 
-    return conn.post do |req|
+    conn.post do |req|
       req.url issues_url
       req.body = json_data
     end

@@ -51,16 +51,13 @@ class JiraApi
 
   def create_issue(jira_story)
     response = post(url, jira_story.to_json, headers)
-
-    if not response.success? then
-      raise Exception.new "#{response.status} #{response.body}"
-    end
+    return response.success?, response.body
   end
 
   protected
 
   def headers
-    return {'Content-Type' => 'application/json', 'Authorization' => auth_header}
+    {'Content-Type' => 'application/json', 'Authorization' => auth_header}
   end
 
   def post(issues_url, json_data, headers)
@@ -70,7 +67,7 @@ class JiraApi
       faraday.adapter  Faraday.default_adapter
     end
 
-    return conn.post do |req|
+    conn.post do |req|
       req.url issues_url
       req.body = json_data
     end
@@ -97,10 +94,10 @@ class JiraStoryMapper
     hash[:description] = story.description
     hash[:issuetype] = {:name => story.story_type}
 
-    if story.labels then
+    if story.labels
       hash[:labels] = story.labels.map {|label| label.gsub(' ', '_')}
     end
 
-    return { :fields => hash }
+    { :fields => hash }
   end
 end

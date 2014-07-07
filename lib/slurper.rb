@@ -82,15 +82,14 @@ class Slurper
     return @handler if @handler
 
     config = @config
-
-    error = "No handler found for the given configuration: #{config}"
-
     handler = @handlers.detect { |handler| handler.supports? config }
 
-    raise error if not handler
+    unless handler
+      error = "No handler found for the given configuration: #{config}"
+      raise error
+    end
 
     handler.configure! config
-
     @handler = handler
   end
 
