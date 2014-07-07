@@ -61,7 +61,7 @@ describe Jira do
 
   context '#supports' do
     it 'should support the jira config if tracker is given' do
-      @jira.supports?(:tracker => 'jira').should == true
+      @jira.supports?('tracker' => 'jira').should == true
     end
 
     it 'should not support if tracker is missing' do
@@ -69,7 +69,7 @@ describe Jira do
     end
 
     it 'should not support if tracker is anything else' do
-      @jira.supports?(:tracker => 'pivotal').should == false
+      @jira.supports?('tracker' => 'pivotal').should == false
     end
   end
 

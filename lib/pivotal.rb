@@ -6,7 +6,7 @@ class Pivotal
   end
 
   def supports?(config)
-    (config[:tracker] == nil && config[:project_id] != nil) || config[:tracker].downcase == 'pivotal'
+    (config['tracker'] == nil && config['project_id'] != nil) || config.fetch('tracker', '').downcase == 'pivotal'
   end
 
   def configure!(config)

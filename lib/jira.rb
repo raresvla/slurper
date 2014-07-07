@@ -11,7 +11,7 @@ class Jira
   end
 
   def supports?(config)
-    config.fetch(:tracker, '').downcase == 'jira'
+    config.fetch('tracker', '').downcase == 'jira'
   end
 
   def configure!(config)
