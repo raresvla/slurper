@@ -1,6 +1,7 @@
 require 'faraday'
 require 'configliere'
 require 'base64'
+require 'json'
 
 # Jira handler
 class Jira
@@ -35,7 +36,16 @@ class Jira
 
     issue = @mapper.map(yaml_story, @config[:project])
 
-    @api.create_issue(issue)
+    success, response_body = @api.create_issue(issue)
+    response = JSON.parse response_body
+
+    if success
+      message = "Issue key = #{response['key']}, #{@config[:url]}/browse/#{response['key']}"
+    else
+      message = JSON.pretty_generate response
+    end
+
+    yield success, message
   end
 
 end

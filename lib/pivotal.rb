@@ -1,3 +1,5 @@
+require 'json'
+
 # Pivotal handler
 class Pivotal
 
@@ -23,7 +25,17 @@ class Pivotal
 
   def handle(yaml_story)
     @api.configure!(@config.project_id, @config.token)
-    @api.create_story(yaml_story)
+
+    success, response_body = @api.create_story(yaml_story)
+    response = JSON.parse response_body
+
+    if success
+      message = "Issue ID = #{response['id']}, #{response['url']}"
+    else
+      message = JSON.pretty_generate response
+    end
+
+    yield success, message
   end
 
   def dump(filter)

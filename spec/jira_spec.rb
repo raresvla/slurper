@@ -28,7 +28,7 @@ end
 
 describe JiraApi do
   it 'should post with correctly configured the url' do
-    good_response = double(success?: true)
+    good_response = double(success?: true, body: '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}')
 
     api = JiraApi.new
     api.configure!('http://server', 'user', 'pass', '2')
@@ -122,14 +122,16 @@ describe Jira do
 
       api = double()
       api.should_receive(:configure!).with('http://host', 'user', 'pass', 'latest')
-      api.should_receive(:create_issue).with issue
+      api.should_receive(:create_issue).with(issue).and_return([true, '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}'])
 
       handler = Jira.new(mapper, api)
       handler.configure! @config
-      handler.handle @story
-
+      handler.handle @story do |status, response|
+        expect(status).to be_true
+        expect(response).to include('TEST-1')
+      end
     end
 
-
   end
+
 end
