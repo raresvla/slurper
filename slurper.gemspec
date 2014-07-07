@@ -20,6 +20,8 @@ Gem::Specification.new do |gem|
   ]
   gem.files = [
     "bin/slurp",
+    "lib/jira.rb",
+    "lib/pivotal.rb",
     "lib/slurper.rb",
     "lib/story.rb",
     "lib/cacert.pem"
