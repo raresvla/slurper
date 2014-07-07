@@ -1,12 +1,12 @@
-= slurper gem
+= jira-slurper gem
 
-Slurper allows you to quickly compose your stories in a text file and import them into Pivotal Tracker.
+Slurper allows you to quickly compose your stories in a text file and import them into Jira or Pivotal Tracker.
 
 Works great with slurper.vim! (http://github.com/adamlowe/vim-slurper)
 
 == Install
 
-    gem install slurper
+    gem install jira-slurper
 
 == Config
 
