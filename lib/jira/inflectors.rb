@@ -60,21 +60,24 @@ module Jira
     def self.factory(type, value)
       case type.to_s
         when 'FreeTextField', 'TextField', 'URLField'
-          BaseInflector.new(value)
+          StringInflector.new(value)
         when 'GroupPicker', 'UserPicker', 'SingleVersionPicker', 'SingleSelect'
           IndexedValueInflector.new(value, :name)
         when 'MultiUserPicker', 'MultiGroupPicker', 'MultiSelect'
-          inner = value.map do |v|
-            begin
-              factory(type.sub('Multi', ''), v)
-            rescue
-              factory(type.sub('Multi', 'Single'), v)
+          inner = ensure_list(value) do |value|
+            value.map do |v|
+              begin
+                factory(type.sub('Multi', ''), v)
+              rescue
+                factory(type.sub('Multi', 'Single'), v)
+              end
             end
           end
           CompositeInflector.new(*inner)
         when 'Labels'
-          value = value.split(',') if value.is_a?(String)
-          CompositeInflector.new(*(value.map { |v| LabelInflector.new(v) }))
+          ensure_list(value) do |value|
+            CompositeInflector.new(*(value.map { |v| LabelInflector.new(v) }))
+          end
         when 'SelectList', 'Select'
           IndexedValueInflector.new(value, :value)
         when 'ProjectPicker'
@@ -86,6 +89,20 @@ module Jira
           end
           const_get(inflector).new(value)
       end
+    end
+
+    private
+
+    def self.ensure_list(value)
+      value = case value
+                when String
+                  value.split(',').map(&:strip)
+                when Enumerable
+                  value
+                else
+                  raise('Expected enumerable value')
+              end
+      yield value if block_given?
     end
   end
 end
