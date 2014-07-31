@@ -4,7 +4,7 @@ require 'slurper'
 describe Slurper do
 
   context "#create_stories" do
-    let(:stories) { [YamlStory.new(:name => 'A story')] }
+    let(:stories) { [YamlStory.new('name' => 'A story')] }
     let(:config) { {:tracker => 'jira'} }
     let(:slurper) { Slurper.new(config, stories) }
     let(:handler) { double('handler') }

@@ -2,47 +2,71 @@
 # It's only concern is to store and format yaml data from stories
 class YamlStory
 
-  attr_reader :name, :story_type, :requested_by
-
   def initialize(attributes = {}, defaults = {})
-    # delete empty values (otherwise the default_proc bellow won't be called)
-    attributes.delete_if { |key, val| val == '' }
-
-    attributes.default_proc = proc do |hash, key|
-        defaults[key]
-      end
-
-    @name = attributes['name']
-    @description = attributes['description']
-    @story_type = attributes['story_type']
-    @labels = attributes['labels']
-    @requested_by = attributes['requested_by']
+    # delete empty values
+    attributes.delete_if do |key, val|
+      val == '' && defaults.key?(key)
+    end
+    @attributes = defaults.merge(attributes)
   end
 
   def labels
-    return [] if not @labels
-    @labels.split(',').map { |label| label.strip }
+    (@attributes['labels'] || '').split(',').map(&:strip)
   end
 
   def description
-    return nil if @description == nil || @description == ''
+    description = @attributes['description'] || ''
+    if description == ''
+      nil
+    else
+      description.gsub('  ', '').gsub(" \n", "\n")
+    end
+  end
 
-    @description.gsub('  ', '').gsub(" \n", "\n")
+  def [](key)
+    raise "Attribute #{key} not defined" unless @attributes.key?(key.to_s)
+
+    if respond_to?(key.to_sym)
+      send(key.to_sym)
+    else
+      @attributes[key.to_s] == '' ? nil : @attributes[key.to_s]
+    end
+  end
+
+  def []=(key, value)
+    @attributes[key.to_s] = value
+  end
+
+  def method_missing(symbol)
+    self[symbol]
+  end
+
+  def to_hash
+    @attributes.keys.inject({}) do |hash, key|
+      hash[key] = self[key]
+      hash
+    end
   end
 
   def yaml_description
-    return '' if @description == nil || @description == ''
-    return @description.gsub(/^/, '  ')
+    description = @attributes['description']
+    if description.nil? || description.empty?
+      ''
+    else
+      description.gsub(/^/, '  ')
+    end
   end
 
   def to_yaml
-    return "==
+    <<-yaml
+==
 story_type: #{story_type}
-name: \"#{name.gsub('"', "'")}\"
+name: "#{name.gsub('"', "'")}"
 description:
 #{yaml_description}
 labels: #{labels.join(', ')}
-"
+==
+    yaml
   end
 
 end

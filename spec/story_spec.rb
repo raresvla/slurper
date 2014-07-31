@@ -78,4 +78,42 @@ describe YamlStory do
       expect(story.requested_by).to eq 'Mr. Stakeholder'
     end
   end
+
+  context '#[]' do
+    subject { YamlStory.new({'name' => 'Test', 'description' => 'Desc', 'requested_by' => 'Mr. Client'}) }
+
+    it 'return defined attributes' do
+      expect(subject['name']).to eq 'Test'
+      expect(subject['description']).to eq 'Desc'
+      expect(subject['requested_by']).to eq 'Mr. Client'
+    end
+
+    it 'raise exception for undefined attributes' do
+      expect { subject['something'] }.to raise_exception
+    end
+  end
+
+  context 'attributes accessed as methods' do
+    subject { YamlStory.new({'name' => 'Test', 'description' => 'Desc', 'requested_by' => 'Mr. Client'}) }
+
+    it 'return defined attributes' do
+      expect(subject.name).to eq 'Test'
+      expect(subject.description).to eq 'Desc'
+      expect(subject.requested_by).to eq 'Mr. Client'
+    end
+
+    it 'raise exception for undefined attributes' do
+      expect { subject.somethig }.to raise_exception
+    end
+  end
+
+  context '#to_hash' do
+    let(:attrs) do
+      {'name' => 'Test', 'description' => 'Desc', 'requested_by' => 'Mr. Client'}
+    end
+
+    subject { YamlStory.new(attrs).to_hash }
+
+    it { should == attrs }
+  end
 end
