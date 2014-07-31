@@ -4,7 +4,7 @@ require 'bundler'
 
 Gem::Specification.new do |gem|
   gem.name = %q{jira-slurper}
-  gem.version = "1.3"
+  gem.version = "1.3.1"
 
   gem.required_rubygems_version = ">= 1.3.6"
   gem.authors = ["Wes Gibbs", "Adam Lowe", "Stephen Caudill", "Tim Pope", "Catalin Costache"]
@@ -39,5 +39,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency("faraday", ["~> 0.8.8"])
   gem.add_dependency("configliere", ["~> 0.4.8"])
-  gem.add_development_dependency("rspec", ["~> 2.14.0"])
+  gem.add_dependency("json", ["~> 1.7.7"])
+  gem.add_development_dependency("rspec", ["~> 3.0.0"])
 end

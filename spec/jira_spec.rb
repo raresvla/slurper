@@ -12,17 +12,17 @@ describe JiraStoryMapper do
 
   it 'should take the project key from config' do
     result = @mapper.map(@story, 'AB')
-    result[:fields][:project][:key].should == 'AB'
+    expect(result[:fields][:project][:key]).to eq 'AB'
   end
 
   it 'should set the issuetype field with the story_type' do
     result = @mapper.map(@story, 'AB')
-    result[:fields][:issuetype][:name].should == 'Feature'
+    expect(result[:fields][:issuetype][:name]).to eq 'Feature'
   end
 
   it 'should split and trim labels' do
     result = @mapper.map(@story, 'AB')
-    result[:fields][:labels].should == ['a', 'b']
+    expect(result[:fields][:labels]).to eq ['a', 'b']
   end
 end
 
@@ -33,7 +33,7 @@ describe JiraApi do
     api = JiraApi.new
     api.configure!('http://server', 'user', 'pass', '2')
 
-    api.should_receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
+    expect(api).to receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
 
     api.create_issue(double(to_json: 'json'))
 
@@ -45,10 +45,9 @@ describe JiraApi do
 
     api = JiraApi.new
     api.configure!('http://server', 'user', 'pass', '2')
-    api.should_receive(:post).and_return(bad_response)
 
+    expect(api).to receive(:post).and_return(bad_response)
     expect { api.create_issue(issue) }.to raise_error Exception
-
   end
 
 end
@@ -61,15 +60,15 @@ describe Jira do
 
   context '#supports' do
     it 'should support the jira config if tracker is given' do
-      @jira.supports?('tracker' => 'jira').should == true
+      expect(@jira.supports?('tracker' => 'jira')).to be true
     end
 
     it 'should not support if tracker is missing' do
-      @jira.supports?({}).should == false
+      expect(@jira.supports?({})).to be false
     end
 
     it 'should not support if tracker is anything else' do
-      @jira.supports?('tracker' => 'pivotal').should == false
+      expect(@jira.supports?('tracker' => 'pivotal')).to be false
     end
   end
 
@@ -88,18 +87,18 @@ describe Jira do
 
       it 'should pass if the required fields are present' do
         config = @jira.configure! @raw_config
-        config.username.should == 'value'
+        expect(config[:username]).to eq 'value'
       end
 
       it 'should return the default api version' do
         config = @jira.configure! @raw_config
-        config[:api_version].should == 'latest'
+        expect(config[:api_version]).to eq 'latest'
       end
 
       it 'should overwrite the default api_version' do
         @raw_config[:api_version] = '2'
         config = @jira.configure! @raw_config
-        config[:api_version].should == '2'
+        expect(config[:api_version]).to eq '2'
       end
     end
   end
@@ -118,16 +117,16 @@ describe Jira do
 
     it 'should create a json issue using the api' do
       issue = double(to_json: 'json')
-      mapper = double(map: issue)
+      mapper = double(map: issue, configure!: true)
 
       api = double()
-      api.should_receive(:configure!).with('http://host', 'user', 'pass', 'latest')
-      api.should_receive(:create_issue).with(issue).and_return([true, '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}'])
+      expect(api).to receive(:configure!).with('http://host', 'user', 'pass', 'latest')
+      expect(api).to receive(:create_issue).with(issue).and_return([true, '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}'])
 
       handler = Jira.new(mapper, api)
       handler.configure! @config
       handler.handle @story do |status, response|
-        expect(status).to be_true
+        expect(status).to be true
         expect(response).to include('TEST-1')
       end
     end

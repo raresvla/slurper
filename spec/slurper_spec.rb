@@ -19,37 +19,37 @@ describe Slurper do
     end
 
     it "should detect the handler by checking the config" do
-      handler.should_receive(:supports?).with(config).and_return(true)
-      handler.should_receive(:configure!).and_return(true)
-      handler.should_receive(:handle)
+      expect(handler).to receive(:supports?).with(config).and_return(true)
+      expect(handler).to receive(:configure!).and_return(true)
+      expect(handler).to receive(:handle)
 
       slurper.create_stories
     end
 
     it "should call configure on the handler" do
-      handler.should_receive(:supports?).with(config).and_return(true)
-      handler.should_receive(:configure!).with(config)
+      expect(handler).to receive(:supports?).with(config).and_return(true)
+      expect(handler).to receive(:configure!).with(config)
 
       slurper.create_stories
     end
 
     it "should delegate to the proper handler" do
       jira = double
-      jira.should_receive(:supports?).with(config).and_return(false)
+      expect(jira).to receive(:supports?).with(config).and_return(false)
 
       pivotal = double
-      pivotal.should_receive(:supports?).with(config).and_return(true)
-      pivotal.should_receive(:configure!).and_return(true)
-      pivotal.should_receive(:handle).with(stories[0])
+      expect(pivotal).to receive(:supports?).with(config).and_return(true)
+      expect(pivotal).to receive(:configure!).and_return(true)
+      expect(pivotal).to receive(:handle).with(stories[0])
 
       slurper.handlers = [jira, pivotal]
       slurper.create_stories
     end
 
     it "should fail gracefully on handler exceptions" do
-      handler.stub(:supports?).and_return(true)
-      handler.should_receive(:configure!).and_return(true)
-      handler.stub(:handle).and_raise('An error')
+      allow(handler).to receive(:supports?).and_return(true)
+      expect(handler).to receive(:configure!).and_return(true)
+      allow(handler).to receive(:handle).and_raise('An error')
 
       expect { slurper.create_stories }.not_to raise_error
     end
@@ -61,9 +61,9 @@ describe Slurper do
       config_file = File.join(File.dirname(__FILE__), "fixtures", "slurper_config_pivotal.yml")
 
       handler = double
-      handler.stub(:supports?).and_return true
-      handler.stub(:configure!).and_return true
-      handler.should_receive(:handle).once()
+      allow(handler).to receive(:supports?).and_return true
+      allow(handler).to receive(:configure!).and_return true
+      expect(handler).to receive(:handle).once
 
       Slurper.slurp(story_file, config_file, [handler], false)
     end
@@ -80,7 +80,7 @@ describe Slurper do
       let(:config) { {'requested_by' => 'John Doe'} }
 
       it 'should load default values' do
-        story.requested_by.should == 'John Doe'
+        expect(story.requested_by).to eq 'John Doe'
       end
     end
 
@@ -88,7 +88,7 @@ describe Slurper do
       let(:story_file) { 'whitespacey_story.slurper' }
 
       it "strips whitespace from the name" do
-        story.name.should == "Profit"
+        expect(story.name).to eq "Profit"
       end
     end
 
@@ -96,15 +96,15 @@ describe Slurper do
       let(:story_file) { 'full_story.slurper' }
 
       it "parses the name correctly" do
-        story.name.should == 'Profit'
+        expect(story.name).to eq 'Profit'
       end
 
       it "parses the label correctly" do
-        story.labels.should == ['money','power','fame']
+        expect(story.labels).to eq ['money','power','fame']
       end
 
       it "parses the story type correctly" do
-        story.story_type.should == 'feature'
+        expect(story.story_type).to eq 'feature'
       end
     end
 
@@ -113,7 +113,7 @@ describe Slurper do
       let(:story_file) { 'name_only.slurper' }
 
       it "should parse the name correctly" do
-        story.name.should == "Profit"
+        expect(story.name).to eq "Profit"
       end
 
     end
@@ -123,11 +123,11 @@ describe Slurper do
       let(:story_file) { 'empty_attributes.slurper' }
 
       it "should not set any name" do
-        story.name.should be_nil
+        expect(story.name).to be_nil
       end
 
       it "should not set any labels" do
-        story.labels.should == []
+        expect(story.labels).to eq []
       end
     end
   end
