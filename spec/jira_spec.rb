@@ -3,34 +3,69 @@ require 'slurper'
 require 'story'
 require 'jira'
 
-describe JiraStoryMapper do
-  before do
-    @story = YamlStory.new('name' => 'Story name', 'story_type' => 'Feature',
-                           'description' => 'Story desc', 'labels' => 'a, b')
-    @mapper = JiraStoryMapper.new
+describe Jira::StoryMapper do
+  let(:story) do
+    YamlStory.new('project' => 'Test', 'name' => 'Story name', 'story_type' => 'Feature',
+                  'description' => 'Story desc', 'labels' => 'a, b',
+                  'reporter' => 'User', 'assignee' => 'A guy')
   end
+  let(:mapper) { described_class.new }
 
-  it 'should take the project key from config' do
-    result = @mapper.map(@story, 'AB')
-    expect(result[:fields][:project][:key]).to eq 'AB'
-  end
+  describe '#map' do
+    subject { mapper.map(story) }
 
-  it 'should set the issuetype field with the story_type' do
-    result = @mapper.map(@story, 'AB')
-    expect(result[:fields][:issuetype][:name]).to eq 'Feature'
-  end
+    context 'default mappings' do
+      it do
+        should == {
+            :fields => {
+                project: {key: 'Test'},
+                summary: 'Story name',
+                issuetype: {name: 'Feature'},
+                description: 'Story desc',
+                labels: %w(a b),
+                reporter: {name: 'User'},
+                assignee: {name: 'A guy'},
+            }
+        }
+      end
+    end
 
-  it 'should split and trim labels' do
-    result = @mapper.map(@story, 'AB')
-    expect(result[:fields][:labels]).to eq ['a', 'b']
+    context 'extra mappings' do
+      before do
+        mapper.configure!(:mappings => {
+            test: {:type => 'TextField'},
+            something: {:field_name => 'Cici', :type => 'TextField'}
+        })
+        story.tap do |s|
+          s['test'] = 'Hello'
+          s['something'] = 'World!'
+        end
+      end
+
+      it do
+        should == {
+            :fields => {
+                project: {key: 'Test'},
+                summary: 'Story name',
+                issuetype: {name: 'Feature'},
+                description: 'Story desc',
+                labels: %w(a b),
+                reporter: {name: 'User'},
+                assignee: {name: 'A guy'},
+                test: 'Hello',
+                Cici: 'World!'
+            }
+        }
+      end
+    end
   end
 end
 
-describe JiraApi do
+describe Jira::ApiConsumer do
   it 'should post with correctly configured the url' do
     good_response = double(success?: true, body: '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}')
 
-    api = JiraApi.new
+    api = described_class.new
     api.configure!('http://server', 'user', 'pass', '2')
 
     expect(api).to receive(:post).with('http://server/rest/api/2/issue/', 'json', kind_of(Hash)).and_return good_response
@@ -43,7 +78,7 @@ describe JiraApi do
     bad_response = double(success?: false, status: 401)
     issue = double(to_json: 'json')
 
-    api = JiraApi.new
+    api = described_class.new
     api.configure!('http://server', 'user', 'pass', '2')
 
     expect(api).to receive(:post).and_return(bad_response)
@@ -52,10 +87,10 @@ describe JiraApi do
 
 end
 
-describe Jira do
+describe Jira::Handler do
 
   before do
-    @jira = Jira.new
+    @jira = described_class.new
   end
 
   context '#supports' do
@@ -82,7 +117,7 @@ describe Jira do
     context 'good config provided' do
       before do
         required = [:username, :password, :project, :url]
-        @raw_config = Hash[required.map {|v| [v, 'value']} ]
+        @raw_config = Hash[required.map { |v| [v, 'value'] }]
       end
 
       it 'should pass if the required fields are present' do
@@ -123,7 +158,7 @@ describe Jira do
       expect(api).to receive(:configure!).with('http://host', 'user', 'pass', 'latest')
       expect(api).to receive(:create_issue).with(issue).and_return([true, '{"id": 1, "key": "TEST-1", "self":"http://localhost:8090/rest/api/2/issue/1"}'])
 
-      handler = Jira.new(mapper, api)
+      handler = described_class.new(mapper, api)
       handler.configure! @config
       handler.handle @story do |status, response|
         expect(status).to be true

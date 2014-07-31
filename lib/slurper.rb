@@ -63,7 +63,7 @@ class Slurper
 
       begin
         handler.handle(story) do |status, message|
-          if status then
+          if status
             puts "Success: #{message}"
           else
             puts "Failed: #{message}"

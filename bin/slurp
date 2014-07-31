@@ -41,10 +41,10 @@ end.parse!
 
 story_file = ARGV.empty? ? "stories.slurper" : ARGV[0]
 
-handlers = [Jira.new, Pivotal.new]
+handlers = [Jira::Handler.new, Pivotal.new]
 
-raise "Stories file not found: '#{story_file}'" if not File::exists? story_file
-raise "Config file not found: '#{options[:config_file]}'" if not File::exists? options[:config_file]
+raise "Stories file not found: '#{story_file}'" unless File::exists? story_file
+raise "Config file not found: '#{options[:config_file]}'" unless File::exists? options[:config_file]
 
 if options[:dump]
   Slurper.dump(options[:config_file], options[:filter], handlers, options[:reverse])
