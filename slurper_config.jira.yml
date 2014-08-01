@@ -1,6 +1,19 @@
-tracker: jira                   #required
-url: https://jira.server.com    #required
-project: TM                     #required - the project key
-username: username              #required
-password: password              #required
-api_version: latest             #optional
+tracker: jira                   # required
+url: https://jira.server.com    # required
+project: DTM                    # required - the project key
+username: username              # required
+password: password              # required
+api_version: latest             # optional
+
+
+# optional
+# https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue#JIRARESTAPIExample-CreateIssue-Examplesofhowtosetcustomfielddataforotherfieldtypes
+mappings:
+  epic:
+    field_name: customfield_11800
+    type: TextField
+  estimate:
+    field_name: customfield_10003
+    type: NumberField
+  priority:
+    type: SingleSelect

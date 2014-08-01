@@ -2,6 +2,9 @@ require 'yaml'
 require 'story'
 
 class Slurper
+
+  GLOBAL_STORY_ATTRIBUTES = ['project']
+
   attr_accessor :story_file, :stories, :handlers
 
   def self.dump(config_file, filter, handlers, reverse)
@@ -14,7 +17,7 @@ class Slurper
   def self.slurp(story_file, config_file, handlers, reverse)
     config = self.load_config(config_file)
 
-    stories = self.load_stories(story_file, config)
+    stories = self.load_stories(story_file, config.select {|k, _| GLOBAL_STORY_ATTRIBUTES.include?(k)})
     stories.reverse! unless reverse
 
     slurper = new(config, stories)
