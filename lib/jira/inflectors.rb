@@ -78,7 +78,7 @@ module Jira
           ensure_list(value) do |value|
             CompositeInflector.new(*(value.map { |v| LabelInflector.new(v) }))
           end
-        when 'SelectList', 'Select'
+        when 'SelectList'
           IndexedValueInflector.new(value, :value)
         when 'ProjectPicker'
           IndexedValueInflector.new(value, :key)

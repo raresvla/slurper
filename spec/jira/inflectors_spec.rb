@@ -103,18 +103,12 @@ describe Jira::Inflectors do
       end
     end
 
-    %w(MultiUserPicker MultiGroupPicker).each do |type|
+    %w(MultiUserPicker MultiGroupPicker MultiSelect).each do |type|
       context "with #{type} data" do
         let(:type) { type }
         let(:original) { %w(a b c) }
         its(:value) { should == [{name: 'a'}, {name: 'b'}, {name: 'c'}] }
       end
-    end
-
-    context 'with MultiSelect data' do
-      let(:type) { 'MultiSelect' }
-      let(:original) { %w(a b c) }
-      its(:value) { should == [{value: 'a'}, {value: 'b'}, {value: 'c'}] }
     end
 
     context 'with Labels' do
@@ -131,12 +125,10 @@ describe Jira::Inflectors do
       end
     end
 
-    %w(SelectList Select).each do |type|
-      context "with #{type} data" do
-        let(:type) { type }
-        let(:original) { 'something' }
-        its(:value) { should == {value: 'something'} }
-      end
+    context 'with SelectList data' do
+      let(:type) { 'SelectList' }
+      let(:original) { 'something' }
+      its(:value) { should == {value: 'something'} }
     end
 
     context 'with ProjectPicker data' do
