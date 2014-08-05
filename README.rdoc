@@ -15,7 +15,7 @@ See the bundled `slurper_config.jira.yml` and `slurper_config.pivotal.yml` for e
 
 === Example
 
-Jira Configuration
+==== Jira Configuration
 
   tracker: jira                   #required
   url: https://jira.server.com    #required
@@ -31,15 +31,15 @@ Jira Configuration
                   # GroupPicker, MultiGroupPicker, UserPicker, MultiUserPicker
                   # NumberField, TextField, URLField
 
-* Field name and type can be found by performing a DOM inspect in the Jira form:
-  - "field_name" - appears in the element's name / ID
-  - "type" - the Rule of Thumb for most tools is: 
+- Field name and type can be found by performing a DOM inspect in the Jira form:
+  - *field_name* - appears in the element's name / ID
+  - *type* - the Rule of Thumb for most fields is: 
     - SingleSelect = select where I can choose only one value
     - MultipleSelect = select where I can choose multiple values
     - TextField / NumberField for everything else
-* For extended information about supported types, please check: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue#JIRARESTAPIExample-CreateIssue-Examplesofhowtosetcustomfielddataforotherfieldtypes  
+- For extended information about supported types, please check: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue#JIRARESTAPIExample-CreateIssue-Examplesofhowtosetcustomfielddataforotherfieldtypes  
 
-Pivotal Configuration
+==== Pivotal Configuration
 
   project_id: 1234
   requested_by: Jane Stakeholder
