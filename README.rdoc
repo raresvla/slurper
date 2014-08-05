@@ -15,6 +15,30 @@ See the bundled `slurper_config.jira.yml` and `slurper_config.pivotal.yml` for e
 
 === Example
 
+Jira Configuration
+
+  tracker: jira                   #required
+  url: https://jira.server.com    #required
+  project: TM                     #required - the project key
+  username: username              #optional - JIRA_USERNAME env variable
+  password: password              #optional - JIRA_PASSWORD env variable
+  api_version: latest             #optional
+  mappings:
+    # Protoype
+    name:
+      field_name: # the actual name from your Jira Board
+      type:       # possible values: SimpleSelect, MultiSelect, SelectList,
+                  # GroupPicker, MultiGroupPicker, UserPicker, MultiUserPicker
+                  # NumberField, TextField, URLField
+
+* Field name and type can be found by performing a DOM inspect in the Jira form:
+  - "field_name" - appears in the element's name / ID
+  - "type" - the Rule of Thumb for most tools is: 
+    - SingleSelect = select where I can choose only one value
+    - MultipleSelect = select where I can choose multiple values
+    - TextField / NumberField for everything else
+* For extended information about supported types, please check: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue#JIRARESTAPIExample-CreateIssue-Examplesofhowtosetcustomfielddataforotherfieldtypes  
+
 Pivotal Configuration
 
   project_id: 1234
@@ -30,14 +54,7 @@ The requested_by field should be the name of your project stakeholder exactly as
 The ssl field should be set to true if you've enabled "Use HTTPS" in Pivotal Tracker.
 SSL is being verified by peer using the cacert.pem from (http://curl.haxx.se/ca)
 
-Jira Configuration
 
-    tracker: jira                   #required
-    url: https://jira.server.com    #required
-    project: TM                     #required - the project key
-    username: username              #optional - JIRA_USERNAME env variable
-    password: password              #optional - JIRA_PASSWORD env variable
-    api_version: latest             #optional
 
 
 == Usage
@@ -59,7 +76,6 @@ Or even
 === Example stories.slurper
 
       ==
-
       story_type:
         chore
       name:
@@ -70,7 +86,6 @@ Or even
       labels:
         staging
       ==
-
       story_type:
         feature
       name:
@@ -85,7 +100,6 @@ Or even
       labels:
         campaign managers
       ==
-
       story_type:
         release
       name:
@@ -96,7 +110,6 @@ Or even
       labels:
         campaign managers
       ==
-
       story_type:
         bug
       name:
