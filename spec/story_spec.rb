@@ -79,6 +79,20 @@ describe YamlStory do
     end
   end
 
+  context '#key?' do
+    subject { YamlStory.new({'name' => 'Test', 'description' => 'Desc', 'requested_by' => 'Mr. Client'}).key?(key) }
+
+    context 'with existing key' do
+      let(:key) { 'name' }
+      it { should be true }
+    end
+
+    context 'with other key' do
+      let(:key) { 'missing' }
+      it { should be false }
+    end
+  end
+
   context '#[]' do
     subject { YamlStory.new({'name' => 'Test', 'description' => 'Desc', 'requested_by' => 'Mr. Client'}) }
 

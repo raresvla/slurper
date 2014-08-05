@@ -38,7 +38,7 @@ module Jira
       @api.configure!(@config[:url], @config[:username], @config[:password], @config[:api_version])
 
       yaml_story['project'] = @config[:project]
-      yaml_story['reporter'] = @config[:username]
+      yaml_story['reporter'] = @config[:username] unless yaml_story.key?('reporter')
 
       issue = @mapper.map(yaml_story)
 

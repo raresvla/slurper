@@ -23,6 +23,10 @@ class YamlStory
     end
   end
 
+  def key?(key)
+    @attributes.key?(key.to_s)
+  end
+
   def [](key)
     raise "Attribute #{key} not defined" unless @attributes.key?(key.to_s)
 
