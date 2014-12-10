@@ -18,7 +18,7 @@ class Slurper
     config = self.load_config(config_file)
 
     stories = self.load_stories(story_file, config.select {|k, _| GLOBAL_STORY_ATTRIBUTES.include?(k)})
-    stories.reverse! unless reverse
+    stories.reverse! if reverse
 
     slurper = new(config, stories)
     slurper.handlers = handlers
